@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>
+        了解网页结构化数据 |
+        
+        狗蛋儿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="什么是结构化数据网页的内容是人类可读的，机器很难从中提取有用的信息。对于机器来说，虽然 HTML 标签具有一部分的语义功能，但是不是所有有用的信息都可以找到特定的标签来表达。为了帮助搜索引擎理解网页的内容，需要在页面中加入结构化数据，这种数据就是机器可读的页面内容。 词汇表词汇表是定义了人类世界中大部分可描述的事物的类库。schema.org 词汇表中可以查看已定义的类。 每个类都有自己的属性，属">
+<meta property="og:type" content="article">
+<meta property="og:title" content="了解网页结构化数据">
+<meta property="og:url" content="https://shens3.github.io/blog/SEO/learn-about-structured-data-in-document/">
+<meta property="og:site_name" content="狗蛋儿">
+<meta property="og:description" content="什么是结构化数据网页的内容是人类可读的，机器很难从中提取有用的信息。对于机器来说，虽然 HTML 标签具有一部分的语义功能，但是不是所有有用的信息都可以找到特定的标签来表达。为了帮助搜索引擎理解网页的内容，需要在页面中加入结构化数据，这种数据就是机器可读的页面内容。 词汇表词汇表是定义了人类世界中大部分可描述的事物的类库。schema.org 词汇表中可以查看已定义的类。 每个类都有自己的属性，属">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-21T07:22:41.000Z">
+<meta property="article:modified_time" content="2020-03-21T14:46:29.413Z">
+<meta property="article:author" content="shens3">
+<meta property="article:tag" content="json-ld">
+<meta property="article:tag" content="Microdata">
+<meta property="article:tag" content="RDFa">
+<meta name="twitter:card" content="summary">
+    
+    
+    
+        
+            
+<link rel="stylesheet" href="/blog/css/markdown.css">
+
+        
+            
+<link rel="stylesheet" href="/blog/css/july.css">
+
+        
+    
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+
+<div id="banner-outer" class="">
+    <div id="banner-image" style="background-image: url(/blog/img/kitty.jpg)"></div>
+    <img src="/blog/img/avatar.jpeg" id="avatar">
+</div>
+
+<div id="menu-outer">
+    <div id="menu-inner">
+        
+            <a class="false" href="/blog/">Home</a>
+        
+            <a class="false" href="/blog/archives/">Archives</a>
+        
+    </div>
+</div>
+
+<div id="content-outer" class="container">
+    <div id="content-inner">
+        <article id="post">
+    <h1 id="post-title">了解网页结构化数据</h1>
+    <time id="post-date" datetime="2020-03-21T07:22:41.000Z">
+        三月 21, 2020
+    </time>
+    <div id="post-content" class="markdown-body">
+        <h2 id="什么是结构化数据"><a href="#什么是结构化数据" class="headerlink" title="什么是结构化数据"></a>什么是结构化数据</h2><p>网页的内容是人类可读的，机器很难从中提取有用的信息。对于机器来说，虽然 <code>HTML</code> 标签具有一部分的语义功能，但是不是所有有用的信息都可以找到特定的标签来表达。为了帮助搜索引擎理解网页的内容，需要在页面中加入结构化数据，这种数据就是机器可读的页面内容。</p>
+<h2 id="词汇表"><a href="#词汇表" class="headerlink" title="词汇表"></a>词汇表</h2><p>词汇表是定义了人类世界中大部分可描述的事物的类库。<a href="https://schema.org/docs/full.html" target="_blank" rel="noopener">schema.org</a> 词汇表中可以查看已定义的类。</p>
+<p>每个类都有自己的属性，属性可以是基本类，或则是其他定义的类。比如人 <a href="https://schema.org/Person" target="_blank" rel="noopener"><code>Person</code></a>，有属性 <code>name</code>，表示名字，这个属性是 <code>Text</code> 类，属于基本类；还有属性 <code>Parent</code>，表示这个人的父母，这个属性是 <code>Person</code> 类，属于定义类。</p>
+<h2 id="结构化数据的三种格式"><a href="#结构化数据的三种格式" class="headerlink" title="结构化数据的三种格式"></a>结构化数据的三种格式</h2><p>在页面中使用结构化数据其实就是将 <em>词汇表</em> 中的类和对应的值用某种方式在 <code>HTML</code> 中出现。</p>
+<p><strong>谷歌搜索</strong>支持三种格式的结构化数据。下面以一个人为例子，列举每种格式的语法。</p>
+<h3 id="JSON-LD"><a href="#JSON-LD" class="headerlink" title="JSON-LD"></a>JSON-LD</h3><pre><code class="html">&lt;script type=&quot;application/json+ld&quot;&gt;
+{
+  &quot;@context&quot;: &quot;http://schema.org&quot;,
+  &quot;@type&quot;: &quot;Person&quot;,
+  &quot;name&quot;: &quot;Manu Sporny&quot;,
+  &quot;telephone&quot;: &quot;1-800-555-0199&quot;,
+  &quot;url&quot;: &quot;http://manu.sporny.org/&quot;
+}
+&lt;/script&gt;</code></pre>
+<h3 id="Microdata"><a href="#Microdata" class="headerlink" title="Microdata"></a>Microdata</h3><pre><code class="html">&lt;p itemscope itemtype=&quot;http://schema.org/Person&quot;&gt;
+   My name is
+   &lt;span itemprop=&quot;name&quot;&gt;Manu Sporny&lt;/span&gt;
+   and you can give me a ring via
+   &lt;span itemprop=&quot;telephone&quot;&gt;1-800-555-0199&lt;/span&gt;
+   or visit 
+   &lt;a itemprop=&quot;url&quot; href=&quot;http://manu.sporny.org/&quot;&gt;my homepage&lt;/a&gt;.
+&lt;/p&gt;</code></pre>
+<h3 id="RDFa"><a href="#RDFa" class="headerlink" title="RDFa"></a>RDFa</h3><pre><code class="html">&lt;p vocab=&quot;http://schema.org/&quot; typeof=&quot;Person&quot;&gt;
+   My name is
+   &lt;span property=&quot;name&quot;&gt;Manu Sporny&lt;/span&gt;
+   and you can give me a ring via
+   &lt;span property=&quot;telephone&quot;&gt;1-800-555-0199&lt;/span&gt;
+   or visit 
+   &lt;a property=&quot;url&quot; href=&quot;http://manu.sporny.org/&quot;&gt;my homepage&lt;/a&gt;.
+&lt;/p&gt;</code></pre>
+<h2 id="利用结构化数据改善搜索结果中的表现"><a href="#利用结构化数据改善搜索结果中的表现" class="headerlink" title="利用结构化数据改善搜索结果中的表现"></a>利用结构化数据改善搜索结果中的表现</h2><p>在<a href="https://developers.google.com/search/reference/overview" target="_blank" rel="noopener">谷歌开发者文档</a>中可以查阅到详细的方法与步骤。</p>
+<br>
+
+<h2 id="更多参考"><a href="#更多参考" class="headerlink" title="更多参考"></a>更多参考</h2><ul>
+<li><a href="https://html.spec.whatwg.org/multipage/microdata.htm" target="_blank" rel="noopener">Microdata, WHATWG</a></li>
+<li><a href="https://www.w3.org/TR/rdfa-lite/" target="_blank" rel="noopener">rdfa-lite, W3C</a></li>
+<li><a href="https://developers.google.com/search/docs/guides/intro-structured-data" target="_blank" rel="noopener">了解结构化数据的工作原理, GOOGLE</a></li>
+<li><a href="https://json-ld.org/" target="_blank" rel="noopener">json-ld</a></li>
+</ul>
+
+    </div>
+</article>
+
+<div id="paginator">
+    
+</div>
+
+    </div>
+</div>
+
+<div id="bottom-outer">
+    <div id="bottom-inner">
+        2019-2020 shens3 
+    </div>
+</div>
+
+<div id="to-top">
+    <i class="iconfont icon-up"></i>
+</div>
+
+
+    
+        
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/highlight-9.13.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/transition.js"></script>
+
+    
+        
+<script src="/blog/js/smooth-scroll.min.js"></script>
+
+    
+
+
+
+    <script>
+      $(function () {
+        $('#banner-outer').addClass('fade-out')
+        $('#menu-outer').addClass('fade-show')
+
+        $('pre').each(function (i, block) {
+          hljs.highlightBlock(block);
+        });
+      })
+    </script>
+
+
+<script>
+  $(function () {
+    $(window).scroll(function () {
+      if ($(window).scrollTop() > 150) {
+        $("#to-top").fadeIn();
+      } else {
+        $("#to-top").fadeOut();
+      }
+    });
+    $("#to-top").click(function () {
+      $("body,html").animate({scrollTop: 0}, 500);
+      return false;
+    })
+  })
+</script>
+</body>
+</html>
