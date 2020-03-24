@@ -265,6 +265,9 @@ article#post > #post-content {
   box-shadow: 0 0 30px #ababab;
   border-radius: 5px;
 }
+.markdown-body img.no-shadow {
+  box-shadow: none;
+}
 .markdown-body a:not([disabled]),
 .markdown-body a:not([disabled]):hover {
   position: relative;
@@ -343,4 +346,3 @@ article#post > #post-content {
 .icon-menu:before {
   content: "\e609";
 }
-/*# sourceMappingURL=july.css.map */

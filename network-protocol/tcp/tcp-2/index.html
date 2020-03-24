@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>
+        TCP协议（二） |
+        
+        狗蛋儿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="数据结构为了保证不丢包、不乱序，在收发两端的 TCP 还需要维护两个发送列表。 发送端   滑动窗口的大小应该小于等于 min(流量窗口, 拥塞窗口)  接收端  乱序和丢包问题为了确定一个包是真的发送到，接收方需要发送一个带确认序号的应答包。应答包的机制有：  累计应答 确认序号为发送方发送的下个包的序号，理解为期待序号    如果发送方没有收到应答包，发送方会尽可能的尝试再次发送。触发重传的时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP协议（二）">
+<meta property="og:url" content="https://shens3.github.io/blog/network-protocol/tcp/tcp-2/">
+<meta property="og:site_name" content="狗蛋儿">
+<meta property="og:description" content="数据结构为了保证不丢包、不乱序，在收发两端的 TCP 还需要维护两个发送列表。 发送端   滑动窗口的大小应该小于等于 min(流量窗口, 拥塞窗口)  接收端  乱序和丢包问题为了确定一个包是真的发送到，接收方需要发送一个带确认序号的应答包。应答包的机制有：  累计应答 确认序号为发送方发送的下个包的序号，理解为期待序号    如果发送方没有收到应答包，发送方会尽可能的尝试再次发送。触发重传的时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shens3.github.io/blog/network-protocol/tcp/tcp-2/tcp_send_data.png">
+<meta property="og:image" content="https://shens3.github.io/blog/network-protocol/tcp/tcp-2/tcp_rcv_data.png">
+<meta property="og:image" content="https://shens3.github.io/blog/network-protocol/tcp/tcp-2/tcp_cal_ack.png">
+<meta property="og:image" content="https://shens3.github.io/blog/network-protocol/tcp/tcp-2/tcp_quick_resend.png">
+<meta property="og:image" content="https://shens3.github.io/blog/network-protocol/tcp/tcp-2/tcp_slowaciton_cogs.png">
+<meta property="og:image" content="https://shens3.github.io/blog/network-protocol/tcp/tcp-2/tcp_congestion_ctro.png">
+<meta property="article:published_time" content="2020-03-24T04:25:34.000Z">
+<meta property="article:modified_time" content="2020-03-24T13:40:41.438Z">
+<meta property="article:author" content="shens3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shens3.github.io/blog/network-protocol/tcp/tcp-2/tcp_send_data.png">
+    
+    
+    
+<link rel="stylesheet" href="/blog/style/july.css">
+
+    
+<link rel="stylesheet" href="/blog/style/markdown.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+
+<div id="banner-outer" class="">
+    <div id="banner-image" style="background-image: url(/blog/img/kitty.jpg)"></div>
+    <img src="/blog/img/avatar.jpeg" id="avatar">
+</div>
+
+<div id="menu-outer">
+    <div id="menu-inner">
+        
+            <a class="false" href="/blog/">Home</a>
+        
+            <a class="false" href="/blog/archives/">Archives</a>
+        
+    </div>
+</div>
+
+<div id="content-outer" class="container">
+    <div id="content-inner">
+        <article id="post">
+    <h1 id="post-title">TCP协议（二）</h1>
+    <time id="post-date" datetime="2020-03-24T04:25:34.000Z">
+        三月 24, 2020
+    </time>
+    <div id="post-content" class="markdown-body">
+        <h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>为了保证不丢包、不乱序，在收发两端的 <code>TCP</code> 还需要维护两个发送列表。</p>
+<h4 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h4><img src="/blog/network-protocol/tcp/tcp-2/tcp_send_data.png" class="" title="tcp发送端的数据结构">
+
+<blockquote>
+<p>滑动窗口的大小应该小于等于 min(流量窗口, 拥塞窗口)</p>
+</blockquote>
+<h4 id="接收端"><a href="#接收端" class="headerlink" title="接收端"></a>接收端</h4><img src="/blog/network-protocol/tcp/tcp-2/tcp_rcv_data.png" class="" title="tcp接收端的数据结构">
+
+<h2 id="乱序和丢包问题"><a href="#乱序和丢包问题" class="headerlink" title="乱序和丢包问题"></a>乱序和丢包问题</h2><p>为了确定一个包是真的发送到，接收方需要发送一个带确认序号的应答包。应答包的机制有：</p>
+<ul>
+<li>累计应答</li>
+<li>确认序号为发送方发送的下个包的序号，理解为期待序号</li>
+</ul>
+<img src="/blog/network-protocol/tcp/tcp-2/tcp_cal_ack.png" class="" title="tcp累计应答">
+
+<p>如果发送方没有收到应答包，发送方会尽可能的尝试再次发送。<strong>触发重传的时机有：</strong></p>
+<ul>
+<li><p>超时，没有在<span style="color: red;">规定的时间</span>内收到带确认序号的应答包</p>
+<ul>
+<li>初始重传时间：采用自适应重传算法，估计往返时间，采样RTT进行加权平均计算，且需要考虑波动范围</li>
+<li>累计重传时间：多次重传会将重传时间设为之前的两倍，因为多次超时，网络环境差，避免拥塞</li>
+</ul>
+</li>
+<li><p>接收方主动触发</p>
+<ol>
+<li><p>接受方连续3次发送冗余 ack，称快速重传</p>
+<img src="/blog/network-protocol/tcp/tcp-2/tcp_quick_resend.png" class="" title="tcp快速重传"></li>
+<li>头部添加<code>SACK</code>，称Selective Acknowledgment</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>主动触发的方式会比超时重传更加快速解决丢包问题。</p>
+</blockquote>
+<h2 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h2><p>流量控制是发送方考虑接收方的处理能力调整发送速率的机制，接收方的处理能力与下述两点有关：</p>
+<ul>
+<li>自身的最大缓存量。是一个固定值</li>
+<li>自身 <code>TCP</code> 层中缓存的未被应用层读取的数据长度。可接受量：最大缓存长度 - 应用层未读取数据长度</li>
+</ul>
+<p><span style="color: red;">可接受量</span>通过 <code>TCP</code> 头部中的 <code>窗口大小</code> 来通知对方调整发送速率.</p>
+<blockquote>
+<h5 id="低能窗口综合征"><a href="#低能窗口综合征" class="headerlink" title="低能窗口综合征"></a>低能窗口综合征</h5><p>当接收方的<code>窗口大小</code>调整为<code>0</code>时，发送方会发送探测数据包，查看是否有机会更新窗口大小。接收方这时要注意，需要等到可接收量恢复到一定大小再通知发送发，避免低能窗口综合征。</p>
+</blockquote>
+<h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><p><code>TCP</code> 开始发送数据时是无法得知网络情况的，为了避免一下把网络塞慢，<code>TCP</code> 采用了<strong>慢启动</strong>机制。</p>
+<img src="/blog/network-protocol/tcp/tcp-2/tcp_slowaciton_cogs.png" class="no-shadow" title="tcp慢启动">
+
+<ul>
+<li><code>y</code> 为可发送包的数量</li>
+<li><code>x</code> 为已成功发送包的数量，即有应答的包的数量</li>
+<li><code>ssthresh</code> 为slow start threshold，减速阀值</li>
+</ul>
+<p>随着成功的包越来越多，可发送的数量呈指数增长，在到达一定值后，呈线性增长。但是当发生<strong>超时重传</strong>或则<strong>丢包</strong>后，这些值将会发生变化。不同的重传有不同的重置方法。</p>
+<p>传统重传：<code>y&#39; = 1</code>，<code>ssthresh&#39; = y / 2</code>，<code>x&#39; = 0</code><br>快输重传：<code>y&#39; = y / 2</code>，<code>ssthresh&#39; = y</code>，<code>x&#39; = 0</code>，y 的公式修改为 y = ssthresh + x</p>
+<img src="/blog/network-protocol/tcp/tcp-2/tcp_congestion_ctro.png" class="" title="拥塞控制">
+
+<p>快输重传算法不照常传输速率断崖式下降而导致网络卡顿。</p>
+<h4 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h4><p><a href="https://queue.acm.org/detail.cfm?id=3022184" target="_blank" rel="noopener">TCP BBR 拥塞算法</a>，寻找高宽带与低时延的平衡点。</p>
+<br>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://time.geekbang.org/column/intro/85" target="_blank" rel="noopener">趣谈网络协议，刘超</a></li>
+</ul>
+
+    </div>
+</article>
+
+<div id="paginator">
+    
+</div>
+
+    </div>
+</div>
+
+<div id="bottom-outer">
+    <div id="bottom-inner">
+        2019-2020 shens3 
+    </div>
+</div>
+
+<div id="to-top">
+    <i class="iconfont icon-up"></i>
+</div>
+
+
+    
+        
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/highlight-9.13.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/transition.js"></script>
+
+    
+        
+<script src="/blog/js/smooth-scroll.min.js"></script>
+
+    
+
+
+
+    <script>
+      $(function () {
+        $('#banner-outer').addClass('fade-out')
+        $('#menu-outer').addClass('fade-show')
+
+        $('pre').each(function (i, block) {
+          hljs.highlightBlock(block);
+        });
+      })
+    </script>
+
+
+<script>
+  $(function () {
+    $(window).scroll(function () {
+      if ($(window).scrollTop() > 150) {
+        $("#to-top").fadeIn();
+      } else {
+        $("#to-top").fadeOut();
+      }
+    });
+    $("#to-top").click(function () {
+      $("body,html").animate({scrollTop: 0}, 500);
+      return false;
+    })
+  })
+</script>
+</body>
+</html>
