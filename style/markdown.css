@@ -527,6 +527,7 @@
 }
 .markdown-body table th {
   font-weight: 600;
+  text-align: center;
 }
 .markdown-body table td,
 .markdown-body table th {
