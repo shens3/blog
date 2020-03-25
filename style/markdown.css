@@ -521,9 +521,9 @@
   margin-bottom: 16px;
 }
 .markdown-body table {
-  display: block;
   width: 100%;
   overflow: auto;
+  table-layout: fixed;
 }
 .markdown-body table th {
   font-weight: 600;
