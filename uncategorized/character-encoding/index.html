@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>
+        字符编码 |
+        
+        狗蛋儿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="如何显示一个字符需要：  字符集 字符编码 字体  字符集Unicode统一码联盟，他们由Xerox、Apple等软件制造商于1988年组成，并且开发了Unicode标准。 USC国际标准化组织（ISO），他们于1984年创建ISO&#x2F;IEC JTC1&#x2F;SC2&#x2F;WG2工作组，试图制定一份“通用字符集”（Universal Character Set，简称UCS），并最终制定了ISO 10646标准。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字符编码">
+<meta property="og:url" content="https://shens3.github.io/blog/uncategorized/character-encoding/">
+<meta property="og:site_name" content="狗蛋儿">
+<meta property="og:description" content="如何显示一个字符需要：  字符集 字符编码 字体  字符集Unicode统一码联盟，他们由Xerox、Apple等软件制造商于1988年组成，并且开发了Unicode标准。 USC国际标准化组织（ISO），他们于1984年创建ISO&#x2F;IEC JTC1&#x2F;SC2&#x2F;WG2工作组，试图制定一份“通用字符集”（Universal Character Set，简称UCS），并最终制定了ISO 10646标准。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-26T08:44:33.000Z">
+<meta property="article:modified_time" content="2020-03-26T17:55:24.746Z">
+<meta property="article:author" content="shens3">
+<meta property="article:tag" content="utf8">
+<meta property="article:tag" content="Unicode">
+<meta property="article:tag" content="编码">
+<meta name="twitter:card" content="summary">
+    
+    
+    
+<link rel="stylesheet" href="/blog/style/july.css">
+
+    
+<link rel="stylesheet" href="/blog/style/markdown.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+
+<div id="banner-outer" class="">
+    <div id="banner-image" style="background-image: url(/blog/img/kitty.jpg)"></div>
+    <img src="/blog/img/avatar.jpeg" id="avatar">
+</div>
+
+<div id="menu-outer">
+    <div id="menu-inner">
+        
+            <a class="false" href="/blog/">Home</a>
+        
+            <a class="false" href="/blog/archives/">Archives</a>
+        
+    </div>
+</div>
+
+<div id="content-outer" class="container">
+    <div id="content-inner">
+        <article id="post">
+    <h1 id="post-title">字符编码</h1>
+    <time id="post-date" datetime="2020-03-26T08:44:33.000Z">
+        三月 26, 2020
+    </time>
+    <div id="post-content" class="markdown-body">
+        <h2 id="如何显示一个字符"><a href="#如何显示一个字符" class="headerlink" title="如何显示一个字符"></a>如何显示一个字符</h2><p>需要：</p>
+<ul>
+<li>字符集</li>
+<li>字符编码</li>
+<li>字体</li>
+</ul>
+<h2 id="字符集"><a href="#字符集" class="headerlink" title="字符集"></a>字符集</h2><h3 id="Unicode"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</h3><p><a href="https://en.wikipedia.org/wiki/Unicode_Consortium" target="_blank" rel="noopener">统一码联盟</a>，他们由Xerox、Apple等软件制造商于1988年组成，并且开发了Unicode标准。</p>
+<h3 id="USC"><a href="#USC" class="headerlink" title="USC"></a>USC</h3><p>国际标准化组织（ISO），他们于1984年创建ISO/IEC JTC1/SC2/WG2工作组，试图制定一份“通用字符集”（Universal Character Set，简称UCS），并最终制定了ISO 10646标准。</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>ASCII、GB2312等也是字符集，但是它们的码值与在计算机中存储的字节码相同，就直接在字符编码中介绍了。</p>
+<h2 id="字符编码"><a href="#字符编码" class="headerlink" title="字符编码"></a>字符编码</h2><ul>
+<li>MDN：一套编码系统定义字节与文本间的映射。</li>
+<li>维基百科：把字符集中的字，编码为指定集合中某一对象（例如：比特模式、自然数序列、8位组或者电脉冲），以便文本在计算机中存储和通过通信网络的传递。</li>
+<li>狗蛋儿：人将字符集合与字节码一一映射后得到的字符表，可以从这个表中通过字节码获得对应的字符。</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p>主要包括控制字符（回车键、退格、换行键等）；可显示字符（英文大小写字符、阿拉伯数字和西文符号）。</p>
+<ul>
+<li>字节数：单字节</li>
+<li>字符数：128</li>
+<li>规则：<br><code>0</code> 到 <code>0x7F</code></li>
+</ul>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312，又称为GB0，由中国国家标准总局发布，1981年5月1日实施。GB2312是中国国家标准的简体中文字符集。它所收录的汉字已经覆盖99.75%的使用频率，基本满足了汉字的计算机处理需要。在中国大陆和新加坡获广泛使用。</p>
+<ul>
+<li>字节数：双字节</li>
+<li>字符数：6763</li>
+<li>规则：<br>第一个（高）字节的范围：<code>0xA1</code> 到 <code>0xFE</code>，共 <code>94</code> ，设定为94个区<br>第二个（低）字节的范围：<code>0xA2</code> 到 <code>0xFF</code>，共 <code>94</code>，与第一个字节组合，即表示每个区有94个字符 </li>
+</ul>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 向下与 GB 2312 完全兼容，向上支持 ISO 10646 国际标准，在前者向后者过渡过程中起到的承上启下的作用。</p>
+<ul>
+<li>字节数：双字节</li>
+<li>字符数：21886</li>
+<li>规则：<br>第一个字节的值从 <code>0x81</code> 到 <code>0xFE</code><br>第二个字节的值从 <code>0x40</code> 到 <code>0xFE</code>（不包括<code>0x7F</code>）</li>
+</ul>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>国家标准 GB 18030-2005《信息技术中文编码字符集》，是中华人民共和国现时最新的内码字集，是 GB 18030-2000《信息技术信息交换用汉字编码字符集基本集的扩充》的修订版。</p>
+<ul>
+<li>字节数：多字节，单、双、四</li>
+<li>字符数：70244</li>
+<li>规则：<ul>
+<li>单字节<br><code>0</code> 到 <code>0x7F</code>，与 ASCII 编码兼容  <ul>
+<li>双字节<br>第一个字节的值从 <code>0x81</code> 到 <code>0xFE</code><br>第二个字节的值从 <code>0x40</code> 到 <code>0xFE</code>（不包括<code>0x7F</code>），与 GBK 标准兼容  </li>
+</ul>
+</li>
+<li>四字节<br>第一个字节的值从 <code>0x81</code> 到 <code>0xFE</code><br>第二个字节的值从 <code>0x30</code> 到 <code>0x39</code><br>第三个字节从 <code>0x81</code> 到 <code>0xFE</code><br>第四个字节从 <code>0x30</code> 到 <code>0x39</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="UTF-8"><a href="#UTF-8" class="headerlink" title="UTF-8"></a>UTF-8</h3><p>为了解决使用 Unicode 时，英文字符空白字节占位多，造成浪费问题。对于单字节的符号，字节的第一位设为0，后面7位为这个符号的 Unicode 码。因此对于英语字母，UTF-8 编码和 ASCII 码是相同的。对于n字节的符号（n &gt; 1），第一个字节的前n位都设为1，第n + 1位设为0，后面字节的前两位一律设为10。剩下的没有提及的二进制位，全部为这个符号的 Unicode 码。</p>
+<ul>
+<li>字节数：单、三、四</li>
+<li>规则：<table>
+<thead>
+<tr>
+<th>Unicode符号范围(十六进制)</th>
+<th>UTF-8编码方式（二进制）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0000 0000 - 0000 007F</td>
+<td>0xxxxxxx</td>
+</tr>
+<tr>
+<td>0000 0080 - 0000 07FF</td>
+<td>110xxxxx 10xxxxxx</td>
+</tr>
+<tr>
+<td>0000 0800 - 0000 FFFF</td>
+<td>1110xxxx 10xxxxxx 10xxxxxx</td>
+</tr>
+<tr>
+<td>0001 0000 - 0010 FFFF</td>
+<td>11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h3 id="USC-2"><a href="#USC-2" class="headerlink" title="USC-2"></a>USC-2</h3><p>可以为全世界最常用的63K字符编码。</p>
+<ul>
+<li>字节数：双</li>
+<li>规则：<br>0 到 <code>0xFFFF</code>，不包括（<code>0xD800</code> 到 <code>0xDFFF</code>）</li>
+</ul>
+<h3 id="UTF-16"><a href="#UTF-16" class="headerlink" title="UTF-16"></a>UTF-16</h3><p>两个字节时可为全世界最常用的63K字符编码，与UCS-2一样；四个字节对不常用的字符进行编码。</p>
+<ul>
+<li>字节数：双、四</li>
+<li>规则：<ul>
+<li>双字节<br>0 到 <code>0xFFFF</code>，不包括（<code>0xD800</code> 到 <code>0xDFFF</code>）</li>
+<li>四字节<ol>
+<li>U+10000 ~ U+10FFFF 的码值，用字节表示，即 <code>0x10000</code> 到 <code>0x10FFFF</code>，设为变量 <code>x</code></li>
+<li><code>y</code> = <code>x</code> - <code>0x10000</code>，<code>y</code> 的范围是 <code>0</code> 到 <code>0xFFFFF</code></li>
+<li>将 <code>y</code> 前后分为两个 10bit 的十六进制数，<code>y1</code>，<code>y2</code></li>
+<li><code>z1</code> = <code>0xD800</code> + <code>y1</code>，<code>z2</code> = <code>0xDC00</code> + <code>y2</code></li>
+<li><code>z1``z2</code>是所需表示的unicode的编码值</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="USC-4-和-UTF-32"><a href="#USC-4-和-UTF-32" class="headerlink" title="USC-4 和 UTF-32"></a>USC-4 和 UTF-32</h3><ul>
+<li>字节数：四</li>
+<li>规则：<ul>
+<li>USC-4<br>理论上 <code>0</code> 到 <code>0x7FFFFFFF</code>，实际上只有 <code>0</code> 到 <code>0x10FFFF</code>  </li>
+<li>UTF-32<br><code>0</code> 到 <code>0x10FFFF</code>，算 USC-4 的子集</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用了错误的编码"><a href="#使用了错误的编码" class="headerlink" title="使用了错误的编码"></a>使用了错误的编码</h2><p>当对文件使用了非本身的编码来解析，会出现：</p>
+<ul>
+<li>乱码<br>不同的编码中，相同的字节会映射成不同的字符</li>
+<li>文件大小改变<br>比如在js中，使用 UTF-8 来读取非 UTF-8 编码的文件，遇到不符合规则的字节，程序尝试解析成一个 UTF-8 的字符，再将数据写入文件，这样一个字节就可能会变成三个字节</li>
+</ul>
+<br>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://www.zhihu.com/question/19677619" target="_blank" rel="noopener">GB2312、GBK、GB18030 这几种字符集的主要区别是什么？</a></li>
+<li><a href="https://www.cnblogs.com/malecrab/p/5300503.html" target="_blank" rel="noopener">细说：Unicode, UTF-8, UTF-16, UTF-32, UCS-2, UCS-4</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank" rel="noopener">字符编码笔记：ASCII，Unicode 和 UTF-8</a></li>
+</ul>
+
+    </div>
+</article>
+
+<div id="paginator">
+    
+</div>
+
+    </div>
+</div>
+
+<div id="bottom-outer">
+    <div id="bottom-inner">
+        2019-2020 shens3 
+    </div>
+</div>
+
+<div id="to-top">
+    <i class="iconfont icon-up"></i>
+</div>
+
+
+    
+        
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/highlight-9.13.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/transition.js"></script>
+
+    
+        
+<script src="/blog/js/smooth-scroll.min.js"></script>
+
+    
+
+
+
+    <script>
+      $(function () {
+        $('#banner-outer').addClass('fade-out')
+        $('#menu-outer').addClass('fade-show')
+
+        $('pre').each(function (i, block) {
+          hljs.highlightBlock(block);
+        });
+      })
+    </script>
+
+
+<script>
+  $(function () {
+    $(window).scroll(function () {
+      if ($(window).scrollTop() > 150) {
+        $("#to-top").fadeIn();
+      } else {
+        $("#to-top").fadeOut();
+      }
+    });
+    $("#to-top").click(function () {
+      $("body,html").animate({scrollTop: 0}, 500);
+      return false;
+    })
+  })
+</script>
+</body>
+</html>
