@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>
+        理解Promise |
+        
+        狗蛋儿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="问题业务流程：先后顺序或则无顺序。  回调地域：本质就是需要链式执行异步操作 等待全部执行：需要等待一系列异步操作完成后才能进行一下步的操作 只需某个操作成功：只取其中一个结果  解决思路需要：  执行与回调处理解耦 可以将判断一系列顺序无关的异步任务的逻辑封装成方法  PromisePromise 就是做了以上事情的一个工具。 如何解耦简单的代码实现： function Promise(exec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解Promise">
+<meta property="og:url" content="https://shens3.github.io/blog/js/learn-promise/">
+<meta property="og:site_name" content="狗蛋儿">
+<meta property="og:description" content="问题业务流程：先后顺序或则无顺序。  回调地域：本质就是需要链式执行异步操作 等待全部执行：需要等待一系列异步操作完成后才能进行一下步的操作 只需某个操作成功：只取其中一个结果  解决思路需要：  执行与回调处理解耦 可以将判断一系列顺序无关的异步任务的逻辑封装成方法  PromisePromise 就是做了以上事情的一个工具。 如何解耦简单的代码实现： function Promise(exec">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-02T06:22:59.000Z">
+<meta property="article:modified_time" content="2020-04-04T12:17:10.393Z">
+<meta property="article:author" content="shens3">
+<meta property="article:tag" content="promise">
+<meta name="twitter:card" content="summary">
+    
+    
+    
+<link rel="stylesheet" href="/blog/style/july.css">
+
+    
+<link rel="stylesheet" href="/blog/style/markdown.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+
+<div id="banner-outer" class="">
+    <div id="banner-image" style="background-image: url(/blog/img/kitty.jpg)"></div>
+    <img src="/blog/img/avatar.jpeg" id="avatar">
+</div>
+
+<div id="menu-outer">
+    <div id="menu-inner">
+        
+            <a class="false" href="/blog/">Home</a>
+        
+            <a class="false" href="/blog/archives/">Archives</a>
+        
+    </div>
+</div>
+
+<div id="content-outer" class="container">
+    <div id="content-inner">
+        <article id="post">
+    <h1 id="post-title">理解Promise</h1>
+    <time id="post-date" datetime="2020-04-02T06:22:59.000Z">
+        四月 02, 2020
+    </time>
+    <div id="post-content" class="markdown-body">
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>业务流程：先后顺序或则无顺序。</p>
+<ul>
+<li>回调地域：本质就是需要链式执行异步操作</li>
+<li>等待全部执行：需要等待一系列异步操作完成后才能进行一下步的操作</li>
+<li>只需某个操作成功：只取其中一个结果</li>
+</ul>
+<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>需要：</p>
+<ul>
+<li>执行与回调处理解耦</li>
+<li>可以将判断一系列顺序无关的异步任务的逻辑封装成方法</li>
+</ul>
+<h2 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h2><p>Promise 就是做了以上事情的一个工具。</p>
+<h3 id="如何解耦"><a href="#如何解耦" class="headerlink" title="如何解耦"></a>如何解耦</h3><p>简单的代码实现：</p>
+<pre><code class="js">function Promise(executor) {
+  this.onFulfilledCallbacks = [];
+  this.onRejectedCallbacks = [];
+  this.status = &#39;pending&#39;;
+  this.value = undefined;
+
+  let self = this;
+
+  function resolve(value) {
+    if (self.status === &#39;pending&#39;) {
+      self.status = &#39;fulfilled&#39;;
+      self.value = value;
+      setTimeout(() =&gt; {
+        self.onFulfilledCallbacks.forEach((fn) =&gt; {
+          fn(value);
+        });
+      }, 0)
+    }
+  }
+
+  function reject(reason) {
+    if (self.status === &#39;pending&#39;) {
+      self.status = &#39;rejected&#39;;
+      self.value = reason;
+      setTimeout(() =&gt; {
+        self.onRejectedCallbacks.forEach((fn) =&gt; {
+          fn(reason);
+        });
+      }, 0)
+    }
+  }
+
+  executor(resolve, reject);
+}
+
+Promise.prototype.then = function(onFulfilled, onRejected) { // 注册回调函数
+  let status = this.status;
+  if (status === &#39;pending&#39;) { // 如果状态为 pending，将回调存起来
+    this.onFulfilledCallbacks.push(onFulfilled);
+    this.onRejectedCallbacks.push(onRejected);
+  } else if (status === &#39;fulfilled&#39;) { // 如果状态为 fulfilled，执行成功的回调
+    setTimeout(() =&gt; {
+      onFulfilled(this.value);
+    }, 0);
+  } else if (status === &#39;rejected&#39;) { // 如果状态为 rejected，执行成功的回调
+    setTimeout(() =&gt; {
+      onReonRejectedject(this.value);
+    }, 0) 
+  }
+
+  return this;
+}</code></pre>
+<p>一般的观察者模式，”通知”这个功能是由<span style="color: red">被观察者</span>来提供的，比如课程类（被观察者），可以有一个方法来通知学生类（观察者）上课了。但对于我们要解决的问题来说，<span style="color: red">被观察者</span>不是一个功能复杂的类，只是一个任务或者一个过程，只需要执行，所以”通知”这个接口设计在<span style="color: red">观察者</span>上。对于<span style="color: red">观察者</span>来说，这个接口是一个”被通知”的作用，给<span style="color: red">被观察者</span>来主动”通知”。显然的，这个接口就是执行函数中被 Promise 传入的两个函数 <code>resolve</code> 和 <code>reject</code>。</p>
+<p>有了通知，还需要设计<span style="color: red">观察者</span>的处理函数要怎么执行。一般来说，观察者观察是有目的的，比如说当课程类通知学生类上课了，学生类就需要执行”去上课”这个动作。对于 Promise 来说，它是一个<strong>通用的观察者</strong>，它只需要收集需要执行的动作，并且在对的状态下执行这些动作。<code>then</code> 方法就是做这些事的。</p>
+<p><span style="color: red">被观察者</span>执行通知成功 <code>resolve</code> 这个方法，可以是同步也可以是异步。但收集动作这个方法是在执行任务之后才执行的，所以当 <code>resolve</code> 被同步执行了，即 <span style="color: red">观察者</span> 被通知发生了变化。一般来说，通知这个接口内部会执行<span style="color: red">观察者</span>需要执行的动作，但这时候then还未执行，也就是说，Promise 还不知道有什么动作可以执行。所以为了确保同步任务下，收集的动作也能被执行，就需要在收集的时候查看任务是否已经结束，如果已经结束就应该执行对应结束状态的函数；如果还没结束，说明是异步任务，放入数组中存储，”被通知”后再执行。</p>
+<p>异步代码打印一个3，</p>
+<pre><code class="js">console.log(1);
+
+setTimeout(() =&gt; {
+  console.log(3);
+});
+
+console.log(2);</code></pre>
+<p>使用 Promise 后，</p>
+<pre><code class="js">new Promise((resolve) =&gt; {
+  console.log(1)
+  setTimeout(() =&gt; {
+    resolve(3);
+  }, 0);
+}).then((value) =&gt; {
+  console.log(value);
+})
+
+console.log(2);</code></pre>
+<p>输出都为<code>1 2 3</code>。包装之后，异步操作的原生回调处理函数中不再直接是相关的处理逻辑代码，而是使用 <code>Promise</code> 提供的 <code>resolve</code> 和 <code>reject</code> 来代替。相关的处理逻辑将会放到 <code>then</code> 方法中传入，这样就实现了解耦。数据的传递不难理解。</p>
+<h3 id="如何链起来"><a href="#如何链起来" class="headerlink" title="如何链起来"></a>如何链起来</h3><p>单单解耦看起来没什么用，到目前为止也只能是单个异步任务的执行与回调处理分开了，还是没有解决多个异步任务需要按顺序执行的需求。Promise 能让异步执行起来更优雅的方法在于，<code>then</code> 方法返回一个 Promise，并且这个 Promise “观察”了 <code>onFulfilled</code> 和 <code>onRejected</code> 的返回值，可以理解为，<code>onFulfilled</code> 和 <code>onRejected</code> 的返回值是一个新的任务。</p>
+<pre><code class="js">function resolvePromise(p2, x, resolve, reject) {
+  if (x === p2) throw TypeError();
+
+  if (x !== null &amp;&amp; typeof x === &#39;object&#39;) { // 如果 x 是一个 Promise
+    try {
+      let then = x.then;
+      let called = false; // 确保传入 then 的两个函数只被执行了其中一个，并且只执行了一次
+      if (then &amp;&amp; typeof then === &#39;function&#39;) {
+        then.call(x, y =&gt; {
+          if (!called) {
+            called = true;
+            resolvePromise(p2, y, resolve, reject); // 如果 x 执行的函数 resolve 了一个 Promise
+          }
+        }, err =&gt; {
+          if (!called) {
+            called = true;
+            reject(err);
+          }
+        })
+      }
+    } catch(err) {
+      reject(err);
+    }
+  } else {
+    resolve(x);
+  }
+}
+
+Promise.prototype.then = function(onFulfilled, onRejected) {
+  let self = this;
+  let status = self.status;
+  let value = self.value;
+
+  let promise2  = new Promise(function(resolve, reject) {
+    if (status === &#39;pending&#39;) {
+      self.onFulfilledCallbacks.push((v) =&gt; {
+        try {
+          resolvePromise(promise2, onFulfilled(v), resolve, reject);
+        } catch(err) {
+          reject(err);
+        }
+      });
+      self.onRejectedCallbacks.push((v) =&gt; {
+        try {
+          resolvePromise(promise2, onRejected(v), resolve, reject);
+        } catch() {
+          reject(err);
+        }
+      });
+    } else if (status === &#39;fulfilled&#39;) {
+      setTimeout(() =&gt; {
+        try {
+          resolvePromise(promise2, onFulfilled(value), resolve, reject);
+        } catch(err) {
+          reject(err);
+        }
+      }, 0);
+    } else if (status === &#39;rejected&#39;) {
+      setTimeout(() =&gt; {try {
+          resolvePromise(promise2, onRejected(value), resolve, reject);
+        } catch(err) {
+          reject(err);
+        }
+      }, 0) 
+    }
+  });
+
+  return promise2;
+}</code></pre>
+<p><code>promise2</code> 的状态于 <code>onFulfilled</code> 或 <code>onRejected</code> 的返回值 <code>x</code> 有关：</p>
+<ul>
+<li>如果 <code>x</code> 的值不是一个 Promise，<code>promise2</code> 的状态为 <code>fulfilled</code>，并且 <code>value</code> 值为 <code>x</code></li>
+<li>如果 <code>x</code> 的值是一个 Promise，<code>promise2</code> 的状态为 <code>x</code> 最终的状态</li>
+</ul>
+<h3 id="控制无顺序要求的任务"><a href="#控制无顺序要求的任务" class="headerlink" title="控制无顺序要求的任务"></a>控制无顺序要求的任务</h3><p>既然解耦了，就可以使用 Promise 提供一个方法，内部添加处理函数实现判断一系列任务是否完成。</p>
+<pre><code class="js">Promise.all = function(array) {
+  return new Promise((resolve, reject) =&gt; {
+    let result = [];
+    let count = array.length;
+    let n = 0;
+    array.forEach((promise, i) =&gt; {
+      if (promise !== null &amp;&amp; typeof promise === &#39;object&#39; &amp;&amp; typeof promise.then === &#39;function&#39;) {
+        promise.then(value =&gt; { // 做一个计数
+          result[i] = value;
+          n++;
+          if (count === n) resolve(result);
+        }, err =&gt; {
+          reject(err);
+        });
+      } else {
+        result[i] = value;
+      }
+    });
+
+    if (count === n) resolve(result);
+  });
+}</code></pre>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>观察者模式</li>
+<li>回调</li>
+<li>递归</li>
+</ul>
+<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><ul>
+<li>每一个promise只执行一个异步任务</li>
+<li>借助链式传递结果，而不是嵌套</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://promisesaplus.com/" target="_blank" rel="noopener">Promises/A+</a></li>
+</ul>
+
+    </div>
+</article>
+
+<div id="paginator">
+    
+</div>
+
+    </div>
+</div>
+
+<div id="bottom-outer">
+    <div id="bottom-inner">
+        2019-2020 shens3 
+    </div>
+</div>
+
+<div id="to-top">
+    <i class="iconfont icon-up"></i>
+</div>
+
+
+    
+        
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/highlight-9.13.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/transition.js"></script>
+
+    
+        
+<script src="/blog/js/smooth-scroll.min.js"></script>
+
+    
+
+
+
+    <script>
+      $(function () {
+        $('#banner-outer').addClass('fade-out')
+        $('#menu-outer').addClass('fade-show')
+
+        $('pre').each(function (i, block) {
+          hljs.highlightBlock(block);
+        });
+      })
+    </script>
+
+
+<script>
+  $(function () {
+    $(window).scroll(function () {
+      if ($(window).scrollTop() > 150) {
+        $("#to-top").fadeIn();
+      } else {
+        $("#to-top").fadeOut();
+      }
+    });
+    $("#to-top").click(function () {
+      $("body,html").animate({scrollTop: 0}, 500);
+      return false;
+    })
+  })
+</script>
+</body>
+</html>
