@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>
+        遍历接口Iterator |
+        
+        狗蛋儿</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="统一遍历接口数据遍历的统一接口，即不同的数据结构都可以用统一的方式遍历数据。Iterator 为迭代器，满足迭代器协议。迭代器是一个对象，有 next 方法，每执行一次 next 方法都会返回一个迭代结果对象 IteratorResult。迭代结果对象有两个属性，value 表示当前迭代的数据，done 表示迭代是否结束。以下为 Typescript 的定义： interface Iterator">
+<meta property="og:type" content="article">
+<meta property="og:title" content="遍历接口Iterator">
+<meta property="og:url" content="https://shens3.github.io/blog/js/iterator/">
+<meta property="og:site_name" content="狗蛋儿">
+<meta property="og:description" content="统一遍历接口数据遍历的统一接口，即不同的数据结构都可以用统一的方式遍历数据。Iterator 为迭代器，满足迭代器协议。迭代器是一个对象，有 next 方法，每执行一次 next 方法都会返回一个迭代结果对象 IteratorResult。迭代结果对象有两个属性，value 表示当前迭代的数据，done 表示迭代是否结束。以下为 Typescript 的定义： interface Iterator">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-05T06:17:59.000Z">
+<meta property="article:modified_time" content="2020-04-06T12:59:11.392Z">
+<meta property="article:author" content="shens3">
+<meta name="twitter:card" content="summary">
+    
+    
+    
+<link rel="stylesheet" href="/blog/style/july.css">
+
+    
+<link rel="stylesheet" href="/blog/style/markdown.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+
+<div id="banner-outer" class="">
+    <div id="banner-image" style="background-image: url(/blog/img/kitty.jpg)"></div>
+    <img src="/blog/img/avatar.jpeg" id="avatar">
+</div>
+
+<div id="menu-outer">
+    <div id="menu-inner">
+        
+            <a class="false" href="/blog/">Home</a>
+        
+            <a class="false" href="/blog/archives/">Archives</a>
+        
+    </div>
+</div>
+
+<div id="content-outer" class="container">
+    <div id="content-inner">
+        <article id="post">
+    <h1 id="post-title">遍历接口Iterator</h1>
+    <time id="post-date" datetime="2020-04-05T06:17:59.000Z">
+        四月 05, 2020
+    </time>
+    <div id="post-content" class="markdown-body">
+        <h2 id="统一遍历接口"><a href="#统一遍历接口" class="headerlink" title="统一遍历接口"></a>统一遍历接口</h2><p>数据遍历的统一接口，即不同的数据结构都可以用统一的方式遍历数据。<code>Iterator</code> 为迭代器，满足迭代器协议。迭代器是一个对象，有 <code>next</code> 方法，每执行一次 <code>next</code> 方法都会返回一个迭代结果对象 <code>IteratorResult</code>。迭代结果对象有两个属性，<code>value</code> 表示当前迭代的数据，<code>done</code> 表示迭代是否结束。以下为 Typescript 的定义：</p>
+<pre><code class="js">interface Iterator {
+  next(value?: any): IteratorResult
+}
+
+interface IteratorResult {
+  value: any,
+  done: boolean
+}</code></pre>
+<p>实现一个可对数组迭代的迭代器。</p>
+<pre><code class="js">function makeIterator() {
+  let self = this;
+  let index = 0;
+  let len = self.length;
+  return {
+    next: function() {
+      return index &lt; len ?
+        { value: self[index++], done: false } :
+        { value: undefined, done: true };
+    }
+  }
+}
+
+Array.prototype.iterator = makeIterator;
+
+let a = [1, 2, 3];
+
+let it = a.iterator();
+
+console.log(it.next()); // { value: 1, done: false }
+console.log(it.next()); // { value: 2, done: false }
+console.log(it.next()); // { value: 3, done: false }
+console.log(it.next()); // { value: undefined, done: true }</code></pre>
+<p>迭代器一般由一个函数生成。如果一个对象拥有一个可以生成迭代器的实例方法，那么这个对象称为 <code>Iterable</code>。比如，上述代码中 Array 的原型上添加了可以生成一个迭代器的方法，所以可以称数组的实例都是可迭代的。在 js 中这个实例方法必须为 <code>[Symbol.iterator]</code>。 <code>Iterable</code> 的 Typescript 定义：</p>
+<pre><code class="js">interface Iterable {
+  [Symbol.iterator](): Iterator
+}</code></pre>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>js 中原生可迭代的对象有：</p>
+<ul>
+<li>Array</li>
+<li>Set</li>
+<li>Map</li>
+<li>String</li>
+<li>TypedArray</li>
+<li>NodeList</li>
+<li>arguments</li>
+</ul>
+<p>js 中原生返回迭代器的方法有 Array、Set、Map 对象的：</p>
+<ul>
+<li>keys()：表示对键值的迭代，没有键值则引用 values()</li>
+<li>values()：表示对值的迭代</li>
+<li>entries()：表示对键值对的迭代，一个键值对用数组表示，<code>[key, value]</code></li>
+</ul>
+<p>实际上 Set.prototype[Symbol.iterator] 引用的就是的 Set.prototype.values()，而 Map.prototype[Symbol.iterator] 引用的是 Map.prototype.entries()。这里要理解 keys 和 values 和 entries 代表的含义，和每种数据结构的组成，以及迭代在数据结构上的变现。</p>
+<p>Array 有键有值；Set 没键有值；Map 有键有值。</p>
+<h2 id="使用迭代器接口遍历"><a href="#使用迭代器接口遍历" class="headerlink" title="使用迭代器接口遍历"></a>使用迭代器接口遍历</h2><p>上述迭代器的列子是手动一次次调用 <code>next</code> 来实现迭代，非常麻烦。需要正确使用迭代器接口。</p>
+<h3 id="自己遍历"><a href="#自己遍历" class="headerlink" title="自己遍历"></a>自己遍历</h3><p>实现一个迭代函数，迭代上面定义的数组 <code>a</code>。</p>
+<pre><code class="js">function iterate(iterable, cb) {
+  let it = this.iterator();
+  let result = it.next();
+
+  while(!result.done) {
+    cb(result.value);
+    result = it.next();
+  }
+}
+
+iterate(a, i =&gt; console.log(i)); // 1 2 3</code></pre>
+<h3 id="原生遍历"><a href="#原生遍历" class="headerlink" title="原生遍历"></a>原生遍历</h3><p>自己写遍历函数还是很麻烦，原生提供了一种语法专门调用迭代器接口进行迭代，即 <code>for...of</code>。<code>of</code> 后面可以是</p>
+<ul>
+<li>Iterable</li>
+<li>Iterator</li>
+</ul>
+<pre><code class="js">let a = [1, 2, 3];
+for(let item of a) {
+  console.log(item); // 1 2 3
+}
+
+for(let [k, v] of a.entries()) {
+  console.log(v); // 1 2 3
+}</code></pre>
+<p>使用<code>for...of</code>的优点：</p>
+<ul>
+<li>支持 break、continue、return</li>
+<li>与数据类型无关</li>
+<li>语法简洁</li>
+</ul>
+<p>值得注意的是，除了 <code>for...of</code>，es6 新增的语法和方法中也有一些内部调用了迭代器接口。比如，扩展运算符、解构赋值、yield*等。</p>
+<blockquote>
+<p>扩展运算符也可以用于普通对象</p>
+</blockquote>
+<h2 id="最后的思考"><a href="#最后的思考" class="headerlink" title="最后的思考"></a>最后的思考</h2><p>总的来说，可遍历就意味数据的顺序是确定的。Array、Set、Map 使用添加数据的方法时就可以确定顺序，而一个对象是没有办法确定其属性的顺序的。也不难理解 Set、Map 构造函数需要接受可迭代对象，如果可以接收一个普通对象，那么这个数据的顺序还是无法确定。记得可以多使用 <code>for..of</code>。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://es6.ruanyifeng.com/#docs/iterator" target="_blank" rel="noopener">Iterator 和 for…of 循环, 阮一峰</a></li>
+</ul>
+
+    </div>
+</article>
+
+<div id="paginator">
+    
+</div>
+
+    </div>
+</div>
+
+<div id="bottom-outer">
+    <div id="bottom-inner">
+        2019-2020 shens3 
+    </div>
+</div>
+
+<div id="to-top">
+    <i class="iconfont icon-up"></i>
+</div>
+
+
+    
+        
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/highlight-9.13.1.min.js"></script>
+
+    
+        
+<script src="/blog/js/transition.js"></script>
+
+    
+        
+<script src="/blog/js/smooth-scroll.min.js"></script>
+
+    
+
+
+
+    <script>
+      $(function () {
+        $('#banner-outer').addClass('fade-out')
+        $('#menu-outer').addClass('fade-show')
+
+        $('pre').each(function (i, block) {
+          hljs.highlightBlock(block);
+        });
+      })
+    </script>
+
+
+<script>
+  $(function () {
+    $(window).scroll(function () {
+      if ($(window).scrollTop() > 150) {
+        $("#to-top").fadeIn();
+      } else {
+        $("#to-top").fadeOut();
+      }
+    });
+    $("#to-top").click(function () {
+      $("body,html").animate({scrollTop: 0}, 500);
+      return false;
+    })
+  })
+</script>
+</body>
+</html>
